@@ -1,14 +1,14 @@
 #include <r502_driver.h>
 #include <unistd.h>
 
-int32_t init_driver(int8_t *port_name, int32_t address, Driver **driver) {
+int32_t init_driver(uint8_t *port_name, int32_t address, Driver **driver) {
     if (port_name == NULL)
         return INIT_ARG;
 
     struct sp_port *port = NULL;
     enum sp_return result;
 
-    result = sp_get_port_by_name(port_name, &port);
+    result = sp_get_port_by_name((const char *)port_name, &port);
     if (result != SP_OK)
         return INIT_FAIL;
 

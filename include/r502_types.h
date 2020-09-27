@@ -8,7 +8,7 @@
 typedef struct Driver {
     uint32_t address;
     struct sp_port *sp;
-    int8_t *cmd_buf;
+    uint8_t *cmd_buf;
     int32_t cmd_buf_len;
     int8_t recv_buf[1024];
 } Driver;

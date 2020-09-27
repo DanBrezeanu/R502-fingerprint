@@ -6,10 +6,6 @@ int32_t parse_reply(CommandType type, uint8_t *data, Reply *reply) {
     if (!check_checksum(data, len))
         return CHKSUM_FAIL;
 
-    for(int i = 0; i < 12; ++i)
-        printf("%.2X ", data[i]);
-    printf("\n");
-
     reply->command_type = type;
     reply->conf_code = data[9];
 
@@ -35,6 +31,8 @@ int32_t parse_reply(CommandType type, uint8_t *data, Reply *reply) {
         err = template_num_reply(data, reply);
         if (err != SUCCESS)
             return REPLY_FAIL;
+        break;
+    default:
         break;
     }
 

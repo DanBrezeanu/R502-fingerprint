@@ -34,7 +34,7 @@
 #define POP_COMM_NOT_ENOUGH_ARGS 0x25
 #define CHKSUM_FAIL              0x26
 #define REPLY_FAIL               0x27
-#define PKG_SEND_FAIL            0x28
+#define ERR_SEND                 0x28
 
 
 

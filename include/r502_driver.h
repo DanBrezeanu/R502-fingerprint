@@ -13,7 +13,7 @@
 #define TIMEOUT             5000
 
 
-int32_t init_driver(int8_t *port_name, int32_t address, Driver **driver);
+int32_t init_driver(uint8_t *port_name, int32_t address, Driver **driver);
 int32_t call_cmd(Driver *driver, CommandType type, Reply *reply, int32_t arg_num, ...);
 
 #endif
