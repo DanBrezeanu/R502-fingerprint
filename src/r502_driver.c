@@ -1,5 +1,5 @@
-#include <driver.h>
-#include <commands.h>
+#include <r502_driver.h>
+#include <unistd.h>
 
 int32_t init_driver(int8_t *port_name, int32_t address, Driver **driver) {
     if (port_name == NULL)
@@ -48,9 +48,7 @@ error:
     return INIT_FAIL;    
 }
 
-#include <stdio.h>
-
-int32_t call_cmd(Driver *driver, CommandType type, int32_t arg_num, ...) {
+int32_t call_cmd(Driver *driver, CommandType type, Reply *reply, int32_t arg_num, ...) {
     Command cmd = {0};
     int32_t err = SUCCESS;
     int32_t result;
@@ -60,43 +58,40 @@ int32_t call_cmd(Driver *driver, CommandType type, int32_t arg_num, ...) {
 
     va_start(ap, arg_num);
     err = get_command_package(driver, cmd, arg_num, ap);
-    va_end(ap);
+    if (err != SUCCESS)
+        goto error_send;
 
-    result = sp_blocking_write(driver->sp, driver->cmd_buf, driver->cmd_buf_len, 5000);
+    result = sp_blocking_write(driver->sp, driver->cmd_buf, driver->cmd_buf_len, TIMEOUT);
  
     /* Check whether we sent all of the data. */
-    if (result == driver->cmd_buf_len)
-            printf("Sent %d bytes successfully.\n", result);
-    else
-            printf("Timed out, %d/%d bytes sent.\n", result, driver->cmd_buf_len);
+    if (result != driver->cmd_buf_len) {
+        err = ERR_SEND;
+        goto error_send;
+    }
 
     /* Allocate a buffer to receive data. */
-    char *buf = calloc(30, 1);
+    int32_t reply_len = get_command_reply_len(type);
+    uint8_t *buf = calloc(reply_len, 1);
 
-    /* Try to receive the data on the other port. */
-    printf("Receiving %d bytes on port %s.\n",
-                    12, sp_get_port_name(driver->sp));
-    result = sp_blocking_read(driver->sp, buf, 12, 5000);
-
-    /* Check whether we received the number of bytes we wanted. */
-    if (result == 12)
-            printf("Received %d bytes successfully.\n", 12);
-    else
-            printf("Timed out, %d/%d bytes received.\n", result, 12);
-
-    /* Check if we received the same data we sent. */
-    buf[result] = '\0';
+    /* Try to receive the data */
+    result = sp_blocking_read(driver->sp, buf, reply_len, TIMEOUT);
     
-    for (int i = 0; i < 12; ++i)
-        printf("%.2X ", buf[i]);
-    printf("\n");
+    /* Check whether we received the number of bytes we wanted. */
+    if (result != reply_len){
+        err = ERR_RECV;
+        goto error_recv;
+    } 
 
-    return SUCCESS;
-}
+    err = parse_reply(type, buf, reply);
+    if (err != SUCCESS)
+        goto error_recv;
 
-int main() {
-    Driver *driver;
+    err = SUCCESS;
 
-    init_driver("/dev/ttyS0", 0xFFFFFFFF, &driver);
-    call_cmd(driver, GenImg, 0);
+error_recv:
+    free(buf);
+error_send:
+    va_end(ap);
+
+    return err;
 }

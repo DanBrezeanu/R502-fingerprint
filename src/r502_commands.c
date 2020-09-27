@@ -1,6 +1,5 @@
-#include <commands.h>
-#include <driver_utils.h>
-#include <stdarg.h>
+#include <r502_commands.h>
+#include <r502_driver.h>
 
 static int32_t (*cmd_func[])(uint8_t *, Command, int32_t) = {
     read_sys_para_pkg, vfy_pwd_pkg, gen_img_pkg, img2tz_pkg, search_pkg,

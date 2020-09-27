@@ -1,5 +1,5 @@
-#ifndef __ERROR_CODES_H__
-#define __ERROR_CODES_H__
+#ifndef __R502_ERROR_CODES_H__
+#define __R502_ERROR_CODES_H__
 
 #define SUCCESS           0x00
 #define ERR_RECV          0x01
@@ -32,6 +32,9 @@
 #define CMD_PKG_FAIL             0x23
 #define POP_COMM_ARG             0x24
 #define POP_COMM_NOT_ENOUGH_ARGS 0x25
+#define CHKSUM_FAIL              0x26
+#define REPLY_FAIL               0x27
+#define PKG_SEND_FAIL            0x28
 
 
 

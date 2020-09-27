@@ -1,62 +1,8 @@
-#ifndef __COMMANDS_H__
-#define __COMMANDS_H__
+#ifndef __R502_COMMANDS_H__
+#define __R502_COMMANDS_H__
 
-#include <driver.h>
-#include <stdint.h>
-#include <stdlib.h>
+#include <r502_types.h>
 #include <stdarg.h>
-
-typedef enum CommandType {
-    ReadSysPara = 0, VfyPwd, GenImg, Img2Tz, Search, LoadChar,
-    Match, TemplateNum, RegModel, Store, DeleteChar
-} CommandType;
-
-typedef struct Command {
-    CommandType command_type;
-
-    union CommandBody {
-        struct ReadSysPara {} read_sys_para;
-        
-        struct VfyPwd { 
-            uint32_t passw;
-        } vfy_pwd;
-        
-        struct GenImg {} gen_img;
-        
-        struct Img2Tz {
-            uint8_t buf;
-        } img2tz;
-
-        struct Search {
-            uint8_t buf;
-            uint16_t start;
-            uint16_t end;
-        } search;
-
-        struct LoadChar {
-            uint8_t buf;
-            uint16_t index;
-        } load_char;
-        
-        struct Match {} match;
-
-        struct TemplateNum {} template_num;
-
-        struct RegModel {} reg_model;
-
-        struct Store {
-            uint8_t buf;
-            uint16_t index;
-        } store;
-
-        struct DeleteChar {
-            uint16_t start;
-            uint16_t count;
-        } delete_char;
-
-    } body;
-
-} Command;
 
 #define BASIC_HEADER_LEN  7
 #define CHECKSUM_LEN  2
