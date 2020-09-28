@@ -21,7 +21,7 @@ typedef struct Driver {
     int32_t cmd_buf_len;
 
     /* Receive buffer */
-    int8_t recv_buf[1024];
+    uint8_t recv_buf[1024];
 } Driver;
 
 /* The commands supported so far by this driver */
@@ -132,6 +132,13 @@ typedef struct Command {
     } body;
 
 } Command;
+
+
+/* Status register bits */
+#define SR_BUSY(x)       ((x) & (1 << 0))
+#define SR_FING_MATCH(x) ((x) & (1 << 1))
+#define SR_PWD_OK(x)     ((x) & (1 << 2))
+#define SR_IMG_VALID(x)  ((x) & (1 << 3))
 
 /* Represents the reply received from the device. */
 /* NOTE: One single reply can be used at a time using this structure */

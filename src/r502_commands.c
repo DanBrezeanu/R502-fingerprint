@@ -36,6 +36,8 @@ int32_t get_basic_header(Driver *driver, uint8_t **basic_header) {
 
     *basic_header = header;
 
+    free(address_as_bytes);
+
     return SUCCESS;
 }
 
@@ -68,6 +70,9 @@ int32_t get_command_package(Driver *driver, Command command, int32_t arg_num, va
         goto error;
 
     /* Save the command package in the driver structure */
+    if (driver->cmd_buf != NULL)
+        free(driver->cmd_buf);
+
     driver->cmd_buf = package;
     driver->cmd_buf_len = pkg_len;
 
@@ -435,6 +440,9 @@ static int32_t store_pkg(uint8_t *pkg, Command command, int32_t pkg_len) {
     pkg[13] = chk_bytes[0];
     pkg[14] = chk_bytes[1];
 
+    free(index_bytes);
+    free(chk_bytes);
+
     return SUCCESS;
 }
 
@@ -468,7 +476,11 @@ static int32_t delete_char_pkg(uint8_t *pkg, Command command, int32_t pkg_len) {
     uint16_t chk = checksum(pkg, 6, pkg_len - 2);
     uint8_t *chk_bytes = to_bytes_MSB(&chk, CHECKSUM_LEN);
     pkg[14] = chk_bytes[0];
-    pkg[16] = chk_bytes[1];
+    pkg[15] = chk_bytes[1];
+
+    free(start_bytes);
+    free(count_bytes);
+    free(chk_bytes);
 
     return SUCCESS;
 }

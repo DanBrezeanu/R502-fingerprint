@@ -56,6 +56,21 @@ error:
     return INIT_FAIL;
 }
 
+int32_t destroy_driver(Driver *driver) {
+    if (driver == NULL)
+        return SUCCESS;
+
+    free(driver->cmd_buf);
+    driver->cmd_buf = NULL;
+
+    sp_free_port(driver->sp);
+    driver->sp = NULL;
+
+    free(driver);
+
+    return SUCCESS;
+}
+
 int32_t call_cmd(Driver *driver, CommandType type, Reply *reply, int32_t arg_num, ...) {
     Command cmd = {0};
     int32_t err = SUCCESS;
@@ -69,7 +84,7 @@ int32_t call_cmd(Driver *driver, CommandType type, Reply *reply, int32_t arg_num
     /* Build package from arguments */
     err = get_command_package(driver, cmd, arg_num, ap);
     if (err != SUCCESS)
-        goto error_send;
+        goto error;
 
     /* Send the raw data to the device */
     result = sp_blocking_write(driver->sp, driver->cmd_buf, driver->cmd_buf_len, TIMEOUT);
@@ -77,36 +92,33 @@ int32_t call_cmd(Driver *driver, CommandType type, Reply *reply, int32_t arg_num
     /* Check whether we sent all of the data. */
     if (result != driver->cmd_buf_len) {
         err = ERR_SEND;
-        goto error_send;
+        goto error;
     }
 
     /* Allocate a buffer to receive data. */
     int32_t reply_len = get_command_reply_len(type);
-    uint8_t *buf = calloc(reply_len, 1);
 
     /* Try to receive the data */
-    result = sp_blocking_read(driver->sp, buf, reply_len, TIMEOUT);
+    result = sp_blocking_read(driver->sp, driver->recv_buf, reply_len, TIMEOUT);
 
     /* Check whether we received the number of bytes we wanted. */
     if (result != reply_len){
         err = ERR_RECV;
-        goto error_recv;
+        goto error;
     }
 
     /* Parse the raw data into a Reply structure */
-    err = parse_reply(type, buf, reply);
+    err = parse_reply(type, driver->recv_buf, reply);
     if (err != SUCCESS || reply->conf_code != SUCCESS) {
         if (reply->conf_code != SUCCESS)
             err = reply->conf_code;
 
-        goto error_recv;
+        goto error;
     }
 
     err = SUCCESS;
 
-error_recv:
-    free(buf);
-error_send:
+error:
     va_end(ap);
 
     return err;

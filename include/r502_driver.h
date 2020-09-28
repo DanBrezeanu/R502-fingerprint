@@ -23,6 +23,14 @@
 int32_t init_driver(uint8_t *port_name, int32_t address, Driver **driver);
 
 /*!
+  * Frees the memory allocated for the driver
+
+  @param[in]    driver        Driver to be freed
+  @param[out]   err           Error code
+*/
+int32_t destroy_driver(Driver *driver);
+
+/*!
   * Call command of type `type`. Driver must be initialized and reply will be
   * stored in `reply`
 
@@ -31,7 +39,7 @@ int32_t init_driver(uint8_t *port_name, int32_t address, Driver **driver);
   @param[in]    driver      The initialized driver
   @param[in]    type        The command to be called
   @param[in]    arg_num     Number of command specific arguments
-  @param[in]    ...         The arguments provided in order
+  @param[in]    ...         The arguments provided in the required order
   @param[out]   reply       Reply structure
   @param[out]   err         Error code
 */

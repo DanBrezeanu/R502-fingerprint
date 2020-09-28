@@ -28,48 +28,26 @@ int main(int argc, char *argv[]) {
     if (err != SUCCESS)
         goto error;
 
-    printf("[INFO]  Checking next valid fingerprint index\n");
-    err = call_cmd(driver, TemplateNum, &reply, 0);
-    if (err != SUCCESS)
-        goto error;
 
-    uint16_t index = reply.body.template_num.index;
-
-    printf("[INFO]  Enrolling fingerprint to index %u\n", index);
-    
-    printf("[INFO]  [1/2] Place finger on reader\n");
+    printf("[INFO]  Place finger on reader\n");
     sleep(2);
     err = call_cmd(driver, GenImg, &reply, 0);
     if (err != SUCCESS)
         goto error;
 
-    printf("[INFO]  [1/2] Processing image into a buffer\n");
+    printf("[INFO]  Processing image into a buffer\n");
     err = call_cmd(driver, Img2Tz, &reply, 1, 1);
     if (err != SUCCESS)
         goto error;
-
-    printf("[INFO]  [2/2] Place finger on reader\n");
-    sleep(2);
-    err = call_cmd(driver, GenImg, &reply, 0);
-    if (err != SUCCESS)
-        goto error;
-
-    printf("[INFO]  [2/2] Processing image into a buffer\n");
-    err = call_cmd(driver, Img2Tz, &reply, 1, 2);
-    if (err != SUCCESS)
-        goto error;
-
-    printf("[INFO]  Processing buffers to generate fingerprint template\n");
-    err = call_cmd(driver, RegModel, &reply, 0);
-    if (err != SUCCESS)
-        goto error;
     
-    printf("[INFO]  Saving the fingerprint template\n");
-    err = call_cmd(driver, Store, &reply, 2, 1, index);
+    printf("[INFO]  Searching the library for a match\n");
+    err = call_cmd(driver, Search, &reply, 3, 1, 0, 0xFF);
     if (err != SUCCESS)
         goto error;
 
-    printf("[INFO]  Fingerprint enrollment complete\n");
+    printf("[INFO]  Finger found. Index = %u    Match Score = %u\n", 
+        reply.body.search.index, reply.body.search.match_score);
+    
     destroy_driver(driver);
 
     return 0;
