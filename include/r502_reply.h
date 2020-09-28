@@ -3,6 +3,7 @@
 
 #include <r502_types.h>
 
+/* Reply package lengths */
 #define READ_SYS_PARA_REPLY_LEN 28
 #define VFY_PWD_REPLY_LEN       12
 #define GEN_IMG_REPLY_LEN       12
@@ -15,10 +16,21 @@
 #define STORE_REPLY_LEN         12
 #define DELETE_CHAR_REPLY_LEN   12
 
+/* Build a Reply structure from raw data received from the serial port */
 int32_t parse_reply(CommandType type, uint8_t *data, Reply *reply);
+
+/* Build a ReadSysPara Reply */
 static int32_t read_sys_para_reply(uint8_t *data, Reply *reply);
+
+/* Build a Search Reply */
 static int32_t search_reply(uint8_t *data, Reply *reply);
+
+/* Build a Match Reply */
 static int32_t match_reply(uint8_t *data, Reply *reply);
+
+/* Build a TemplateNum Reply */
 static int32_t template_num_reply(uint8_t *data, Reply *reply);
+
+/* Other commands' replies contain just the confirmation code */
 
 #endif

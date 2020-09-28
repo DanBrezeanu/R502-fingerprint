@@ -8,7 +8,7 @@ uint8_t *to_bytes_MSB(void *x, size_t size) {
     for (int32_t i = size - 1; i >= 0; --i) {
         bytes[size - 1 - i] = *((uint8_t *) x + i);
     }
-    
+
     return bytes;
 }
 
@@ -18,7 +18,7 @@ uint8_t *to_bytes_LSB(void *x, size_t size) {
     for (int32_t i = 0; i < size; ++i) {
         bytes[i] = *((uint8_t *) x + i);
     }
-    
+
     return bytes;
 }
 
@@ -45,7 +45,7 @@ uint8_t check_checksum(uint8_t *data, uint32_t len) {
     uint16_t chksum_to_check = 0;
     uint16_t chksum = 0;
 
-    chksum_to_check = data[len - 1] + (data[len - 2] << 8); 
+    chksum_to_check = data[len - 1] + (data[len - 2] << 8);
 
     for (int32_t i = 6; i < len - 2; ++i)
         chksum += data[i];

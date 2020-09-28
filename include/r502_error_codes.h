@@ -1,7 +1,10 @@
 #ifndef __R502_ERROR_CODES_H__
 #define __R502_ERROR_CODES_H__
 
+
 #define SUCCESS           0x00
+
+/* Device response error codes */
 #define ERR_RECV          0x01
 #define NO_FINGER         0x02
 #define FAIL_ENROLL       0x03
@@ -26,6 +29,8 @@
 #define WRONG_NOTEPAD_PG  0x1C
 #define FAIL_COMM_PORT    0x1D
 
+
+/* Driver-defined error codes */
 #define INIT_ARG                 0x20
 #define INIT_FAIL                0x21
 #define HEADER_FAIL              0x22
@@ -35,7 +40,6 @@
 #define CHKSUM_FAIL              0x26
 #define REPLY_FAIL               0x27
 #define ERR_SEND                 0x28
-
 
 
 #endif
