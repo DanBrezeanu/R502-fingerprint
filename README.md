@@ -19,5 +19,8 @@ For more information see [wiki](https://github.com/DanBrezeanu/R502-fingerprint/
     
 For building examples: &nbsp; `make examples `
 
+## About
+This program uses the libserialport Library, which is licensed under the GNU Lesser General Public Library, version 3.0.
+
 ## Contributing guidelines
 If you consider contributing to the project, please make sure that your changes have been tested on a R502 fingerprint module.
