@@ -12,5 +12,12 @@ It does not support all the available commands, but rather the necessary ones to
 
 For more information see [wiki](https://github.com/DanBrezeanu/R502-fingerprint/wiki/R502) or [examples](examples).
 
+## Build
+
+    sudo apt install libserialport0 libserialport-dev
+    sudo make install
+    
+For building examples: &nbsp; `make examples `
+
 ## Contributing guidelines
 If you consider contributing to the project, please make sure that your changes have been tested on a R502 fingerprint module.
