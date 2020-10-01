@@ -90,6 +90,9 @@ uint32_t get_command_pkg_len(CommandType type) {
     case DeleteChar:
         len = DELETE_CHAR_LEN;
         break;
+    case UpChar:
+        len = UP_CHAR_LEN;
+        break;
     }
 
     return len;
@@ -131,6 +134,9 @@ uint32_t get_command_reply_len(CommandType type) {
         break;
     case DeleteChar:
         len = DELETE_CHAR_REPLY_LEN;
+        break;
+    case UpChar:
+        len = UP_CHAR_REPLY_LEN;
         break;
     }
 

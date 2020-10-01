@@ -19,6 +19,7 @@
 #define REG_MODEL_LEN     12
 #define STORE_LEN         15
 #define DELETE_CHAR_LEN   16
+#define UP_CHAR_LEN       13
 
 /* Build a package to send for command using the given arguments */
 int32_t get_command_package(Driver *driver, Command command, int32_t arg_num, va_list ap);
@@ -61,6 +62,9 @@ static int32_t store_pkg(uint8_t *pkg, Command command, int32_t pkg_len);
 
 /* Build package for DeleteChar command */
 static int32_t delete_char_pkg(uint8_t *pkg, Command command, int32_t pkg_len);
+
+/* Build package for UpChar command */
+static int32_t up_char_pkg(uint8_t *pkg, Command command, int32_t pkg_len);
 
 
 #endif

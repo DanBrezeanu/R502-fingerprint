@@ -59,7 +59,10 @@ typedef enum CommandType {
     Store,
 
     /* Deletes stores fingerprints from the library starting from an index */
-    DeleteChar
+    DeleteChar,
+    
+    /* Upload character file from one of the buffers to upper computer */
+    UpChar
 
 } CommandType;
 
@@ -128,6 +131,12 @@ typedef struct Command {
             /* Number of fingerprints to delete, starting from `index` */
             uint16_t count;
         } delete_char;
+
+        struct UpChar {
+            /* Character buffer number to be stored */
+            /* NOTE: Available options are 1 and 2. Any other value defaults to 2 */
+            uint8_t buf;
+        } up_char;
 
     } body;
 
@@ -211,6 +220,8 @@ typedef struct Reply {
         struct StoreReply {} store;
 
         struct DeleteCharReply {} delete_char;
+
+        struct UpCharReply {} up_char;
 
     } body;
 

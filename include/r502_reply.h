@@ -15,6 +15,7 @@
 #define REG_MODEL_REPLY_LEN     12
 #define STORE_REPLY_LEN         12
 #define DELETE_CHAR_REPLY_LEN   12
+#define UP_CHAR_REPLY_LEN       12
 
 /* Build a Reply structure from raw data received from the serial port */
 int32_t parse_reply(CommandType type, uint8_t *data, Reply *reply);
