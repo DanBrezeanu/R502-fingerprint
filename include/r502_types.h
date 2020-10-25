@@ -3,8 +3,10 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include <r502_error_codes.h>
 
+#define FINGERPRINT_SIZE 1536
 
 /* Driver for R502 device communication via USART */
 typedef struct Driver {
@@ -221,7 +223,10 @@ typedef struct Reply {
 
         struct DeleteCharReply {} delete_char;
 
-        struct UpCharReply {} up_char;
+        struct UpCharReply {
+            /* Fingerprint data */
+            uint8_t fingerprint[FINGERPRINT_SIZE];
+        } up_char;
 
     } body;
 

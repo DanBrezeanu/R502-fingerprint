@@ -24,4 +24,11 @@ uint32_t get_command_pkg_len(CommandType type);
 /* Get reply length based of `type` */
 uint32_t get_command_reply_len(CommandType type);
 
+/* Returns a non-zero value if command of type `type` needs to 
+   to receive additional packages */
+uint8_t cmd_has_additional_packages(CommandType type);
+
+/* Get additional reply length of `type` */
+uint32_t get_command_additional_reply_len(CommandType type);
+
 #endif

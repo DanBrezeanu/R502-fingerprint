@@ -116,6 +116,14 @@ int32_t call_cmd(Driver *driver, CommandType type, Reply *reply, int32_t arg_num
         goto error;
     }
 
+    /* If additional packages must be received from the device */
+    if (cmd_has_additional_packages(type)) {
+        /* Receive and parse them */
+        err = parse_additional_packages(driver, type, reply);
+        if (err != SUCCESS)
+            goto error;
+    }
+
     err = SUCCESS;
 
 error:

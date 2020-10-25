@@ -3,6 +3,9 @@
 
 #include <r502_types.h>
 
+#define MAX_PACKAGE_LENGTH  139
+#define MAX_DATA_LENGTH 128
+
 /* Reply package lengths */
 #define READ_SYS_PARA_REPLY_LEN 28
 #define VFY_PWD_REPLY_LEN       12
@@ -17,8 +20,14 @@
 #define DELETE_CHAR_REPLY_LEN   12
 #define UP_CHAR_REPLY_LEN       12
 
+/* Additional reply package lengths */
+#define UP_CHAR_ADDITIONAL_REPLY_LEN  1536
+
 /* Build a Reply structure from raw data received from the serial port */
 int32_t parse_reply(CommandType type, uint8_t *data, Reply *reply);
+
+/* Receive and parse additional packages from the serial port. */
+int32_t parse_additional_packages(Driver *driver, CommandType type, Reply *reply);
 
 /* Build a ReadSysPara Reply */
 static int32_t read_sys_para_reply(uint8_t *data, Reply *reply);
@@ -31,6 +40,9 @@ static int32_t match_reply(uint8_t *data, Reply *reply);
 
 /* Build a TemplateNum Reply */
 static int32_t template_num_reply(uint8_t *data, Reply *reply);
+
+/* Build a UpChar additional reply */
+static int32_t upchar_additional_reply(Driver *driver, Reply *reply);
 
 /* Other commands' replies contain just the confirmation code */
 

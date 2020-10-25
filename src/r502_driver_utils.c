@@ -142,3 +142,25 @@ uint32_t get_command_reply_len(CommandType type) {
 
     return len;
 }
+
+uint8_t cmd_has_additional_packages(CommandType type) {
+    switch (type) {
+    case UpChar:
+        return 1;
+    default:
+        return 0;
+    }
+
+    return 0;
+}
+
+uint32_t get_command_additional_reply_len(CommandType type) {
+    switch (type) {
+    case UpChar:
+        return UP_CHAR_ADDITIONAL_REPLY_LEN;
+    default:
+        return 0;
+    }
+
+    return 0;
+}
