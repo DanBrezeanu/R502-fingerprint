@@ -64,7 +64,10 @@ typedef enum CommandType {
     DeleteChar,
     
     /* Upload character file from one of the buffers to upper computer */
-    UpChar
+    UpChar,
+
+    /* Aura LED control */
+    AuraLedConfig
 
 } CommandType;
 
@@ -139,6 +142,24 @@ typedef struct Command {
             /* NOTE: Available options are 1 and 2. Any other value defaults to 2 */
             uint8_t buf;
         } up_char;
+
+        struct AuraLedConfig {
+            /* Control Code */
+            /* NOTE: 1 > breathing light | 2 > flashing light | 3 > light always on | 4 > light always off | 5 > light gradually on | 6 > light gradually off | Any other value defaults to 1 */
+            uint8_t control;
+
+            /* Speed: 0x00 to 0xff, 256 gears, minimum 5s cycle */
+            /* NOTE: It is effective for breathing lamp and flashing lamp,Light gradually on,Light gradually off */            
+            uint8_t speed;
+
+            /* Color Index */
+            /* NOTE: 1 > red | 2 > blue | 3 > purple | Any other value defaults to 1 */
+            uint8_t color;
+
+            /* Number of cycles: 0 to infinite > 1 to 255. */
+            /* NOTE: It is effective for with breathing light and flashing light */
+            uint8_t times;
+        } aura_led_config;
 
     } body;
 
@@ -227,6 +248,8 @@ typedef struct Reply {
             /* Fingerprint data */
             uint8_t fingerprint[FINGERPRINT_SIZE];
         } up_char;
+
+        struct AuraLedConfigReply {} aura_led_config;
 
     } body;
 

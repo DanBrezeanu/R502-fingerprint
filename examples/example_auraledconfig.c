@@ -27,8 +27,8 @@ int main(int argc, char *argv[]) {
     if (err != SUCCESS)
         goto error;
 
-    printf("[INFO]  Checking device status\n");
-    err = call_cmd(driver, ReadSysPara, &reply, 0);
+    printf("[INFO]  Setting Led Config\n");
+    err = call_cmd(driver, AuraLedConfig, &reply, 4, 0x01, 0xFF, 0x01, 0xFF);
     if (err != SUCCESS)
         goto error;
 
