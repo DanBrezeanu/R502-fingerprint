@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
     if (err != SUCCESS)
         goto error;
 
-    printf("[INFO]  Checking device status\n");
+    printf("[INFO]  HandShaking device\n");
     err = call_cmd(driver, HandShake, &reply, 0);
     if (err != SUCCESS)
         goto error;
@@ -27,37 +27,42 @@ int main(int argc, char *argv[]) {
     if (err != SUCCESS)
         goto error;
 
-    printf("[INFO]  Checking device status\n");
-    err = call_cmd(driver, HandShake, &reply, 0);
-    if (err != SUCCESS)
-        goto error;
-
-    printf("[INFO]  Setting new password\n");
-    err = call_cmd(driver, SetPwd, &reply, 1, 0x12345678);
+    printf("[INFO]  Setting new address (new: 0x12345678)\n");
+    err = call_cmd(driver, SetAddr, &reply, 1, 0x12345678);
     if (err != SUCCESS)
         goto error;
     
-    printf("[INFO]  Verifying password (new: 0x12345678)\n");
-    err = call_cmd(driver, VfyPwd, &reply, 1, 0x12345678);
+    printf("[INFO]  Initializing device communication\n");
+    err = init_driver((uint8_t *) argv[1], 0x12345678, &driver);
     if (err != SUCCESS)
         goto error;
 
-    printf("[INFO]  Checking device status\n");
+    printf("[INFO]  HandShaking device\n");
     err = call_cmd(driver, HandShake, &reply, 0);
     if (err != SUCCESS)
         goto error;
-
-    printf("[INFO]  Revert backup to default password\n");
-    err = call_cmd(driver, SetPwd, &reply, 1, 0x00000000);
-    if (err != SUCCESS)
-        goto error;
-
+    
     printf("[INFO]  Verifying password (default: 0x00000000)\n");
     err = call_cmd(driver, VfyPwd, &reply, 1, 0x00000000);
     if (err != SUCCESS)
         goto error;
 
-    printf("[INFO]  Checking device status\n");
+    printf("[INFO]  Revert backup to default address (default: 0xFFFFFFFF)\n");
+    err = call_cmd(driver, SetAddr, &reply, 1, 0xFFFFFFFF);
+    if (err != SUCCESS)
+        goto error;
+
+    printf("[INFO]  Initializing device communication\n");
+    err = init_driver((uint8_t *) argv[1], 0xFFFFFFFF, &driver);
+    if (err != SUCCESS)
+        goto error;
+    
+    printf("[INFO]  Verifying password (default: 0x00000000)\n");
+    err = call_cmd(driver, VfyPwd, &reply, 1, 0x00000000);
+    if (err != SUCCESS)
+        goto error;
+
+    printf("[INFO]  HandShaking device\n");
     err = call_cmd(driver, HandShake, &reply, 0);
     if (err != SUCCESS)
         goto error;

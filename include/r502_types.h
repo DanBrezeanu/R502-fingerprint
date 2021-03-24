@@ -70,7 +70,13 @@ typedef enum CommandType {
     AuraLedConfig,
 
     /* Set Module’s handshaking password */
-    SetPwd
+    SetPwd,
+
+    /* Set Module address */
+    SetAddr,
+
+    /* Send handshake instructions to the module. */
+    HandShake
 
 } CommandType;
 
@@ -169,6 +175,13 @@ typedef struct Command {
             uint32_t passw;
         } set_pwd;
 
+        struct SetAddr {
+            /* Address to be set */
+            uint32_t addr;
+        } set_addr;
+
+        struct HandShake {} handshake;
+
     } body;
 
 } Command;
@@ -260,6 +273,10 @@ typedef struct Reply {
         struct AuraLedConfigReply {} aura_led_config;
 
         struct SetPwdReply {} set_pwd;
+
+        struct SetAddrReply {} set_addr;
+
+        struct HandShakeReply {} handshake;
 
     } body;
 

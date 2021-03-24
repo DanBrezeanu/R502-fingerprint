@@ -16,19 +16,14 @@ int main(int argc, char *argv[]) {
     err = init_driver((uint8_t *) argv[1], 0xFFFFFFFF, &driver);
     if (err != SUCCESS)
         goto error;
-
-    printf("[INFO]  Checking device status\n");
-    err = call_cmd(driver, ReadSysPara, &reply, 0);
+        
+    printf("[INFO]  HandShaking device\n");
+    err = call_cmd(driver, HandShake, &reply, 0);
     if (err != SUCCESS)
         goto error;
 
     printf("[INFO]  Verifying password (default: 0x00000000)\n");
     err = call_cmd(driver, VfyPwd, &reply, 1, 0x00000000);
-    if (err != SUCCESS)
-        goto error;
-
-    printf("[INFO]  Checking device status\n");
-    err = call_cmd(driver, ReadSysPara, &reply, 0);
     if (err != SUCCESS)
         goto error;
 

@@ -18,8 +18,8 @@ int main(int argc, char *argv[]) {
     if (err != SUCCESS)
         goto error;
 
-    printf("[INFO]  Checking device status\n");
-    err = call_cmd(driver, ReadSysPara, &reply, 0);
+    printf("[INFO]  HandShaking device\n");
+    err = call_cmd(driver, HandShake, &reply, 0);
     if (err != SUCCESS)
         goto error;
 
@@ -46,11 +46,21 @@ int main(int argc, char *argv[]) {
         goto error;
 
     printf("[INFO]  Fingerprint raw data:\n");
-
-    for (int i = 0; i < FINGERPRINT_SIZE; ++i) {
-        printf("%.2X ", reply.body.up_char.fingerprint[i]);
+    printf("\t*-------------------------------------------------------");
+    for (uint16_t i = 0; i < FINGERPRINT_SIZE; ++i) {
+        if(i%16 == 0) {
+            if(i==0) {
+                printf("*\n\t| %.4X:\t%.2X ", i, reply.body.up_char.fingerprint[i]);    
+            }
+            else {
+                printf("|\n\t| %.4X:\t%.2X ", i, reply.body.up_char.fingerprint[i]);
+            }
+        }
+        else {
+            printf("%.2X ", reply.body.up_char.fingerprint[i]);
+        }
     }
-    printf("\n");
+    printf("|\n\t*-------------------------------------------------------*\n");
 
     printf("[INFO]  Fingerprint upload complete\n");
     destroy_driver(driver);

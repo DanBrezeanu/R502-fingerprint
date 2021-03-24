@@ -99,6 +99,12 @@ uint32_t get_command_pkg_len(CommandType type) {
     case SetPwd:
         len = SET_PWD_LEN;
         break;
+    case SetAddr:
+        len = SET_ADDR_LEN;
+        break;
+    case HandShake:
+        len = HANDSHAKE_LEN;
+        break;
     }
 
     return len;
@@ -149,6 +155,12 @@ uint32_t get_command_reply_len(CommandType type) {
         break;
     case SetPwd:
         len = SET_PWD_REPLY_LEN;
+        break;
+    case SetAddr:
+        len = SET_ADDR_REPLY_LEN;
+        break;
+    case HandShake:
+        len = HANDSHAKE_REPLY_LEN;
         break;
     }
 

@@ -18,8 +18,8 @@ int main(int argc, char *argv[]) {
     if (err != SUCCESS)
         goto error;
 
-    printf("[INFO]  Checking device status\n");
-    err = call_cmd(driver, ReadSysPara, &reply, 0);
+    printf("[INFO]  HandShaking device\n");
+    err = call_cmd(driver, HandShake, &reply, 0);
     if (err != SUCCESS)
         goto error;
 
