@@ -6,9 +6,10 @@ It does not support all the available commands, but rather the necessary ones to
 
 ## Commands supported
 * Device status reading
-* Password authentication
+* Password authentication and modification
 * Enrolling and deleting fingerprints
 * Verification against saved fingerprints
+* Led control
 
 For more information see [wiki](https://github.com/DanBrezeanu/R502-fingerprint/wiki/R502) or [examples](examples).
 
