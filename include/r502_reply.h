@@ -8,7 +8,7 @@
 
 /* Reply package lengths */
 #define VFY_PWD_REPLY_LEN           12
-#define SET_PWD_REPLY_LEN           11
+#define SET_PWD_REPLY_LEN           12
 #define SET_ADDR_REPLY_LEN          12
 #define SET_SYS_PARA_REPLY_LEN      12
 #define CONTROL_REPLY_LEN           12

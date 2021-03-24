@@ -6,7 +6,7 @@
 static int32_t (*cmd_func[])(uint8_t *, Command, int32_t) = {
     read_sys_para_pkg, vfy_pwd_pkg, gen_img_pkg, img2tz_pkg, search_pkg,
     load_char_pkg, match_pkg, template_num_pkg, reg_model_pkg, store_pkg,
-    delete_char_pkg, up_char_pkg, aura_led_config_pkg
+    delete_char_pkg, up_char_pkg, aura_led_config_pkg, set_pwd_pkg
 };
 
 int32_t get_basic_header(Driver *driver, uint8_t **basic_header) {
@@ -168,7 +168,15 @@ int32_t populate_command_args(Command *command, int32_t arg_num, va_list ap) {
         command->body.aura_led_config.times = va_arg(ap, uint32_t);
 
         break;
+    case SetPwd:
+        if (arg_num < 1)
+            goto error;
+
+        command->body.set_pwd.passw = va_arg(ap, uint32_t);
+
+        break;
     }
+    
 
     return SUCCESS;
 
@@ -572,6 +580,40 @@ static int32_t aura_led_config_pkg(uint8_t *pkg, Command command, int32_t pkg_le
     pkg[15] = chk_bytes[1];
 
     free(chk_bytes);
+
+    return SUCCESS;
+}
+
+static int32_t set_pwd_pkg(uint8_t *pkg, Command command, int32_t pkg_len) {
+    // Required packet:
+    // basic_header           [7]
+    // length | 0x00 0x07     [2]
+    // instr  | 0x12          [1]
+    // passw  | set_pwd.passw [4]
+    // chksum | checksum      [2]
+
+    /* Package length */
+    pkg[7] = 0x00;
+    pkg[8] = 0x07;
+
+    /* Instruction code */
+    pkg[9] = 0x12;
+
+    /* Password */
+    size_t passw_size = sizeof(command.body.set_pwd.passw);
+    uint8_t *passw_bytes = to_bytes_MSB(&(command.body.set_pwd.passw), passw_size);
+    for (int i = 0; i < passw_size; ++i)
+        pkg[i + 10] = passw_bytes[i];
+
+    /* Checksum */
+    uint16_t chk = checksum(pkg, 6, pkg_len - 2);
+    uint8_t *chk_bytes = to_bytes_MSB(&chk, CHECKSUM_LEN);
+
+    pkg[14] = chk_bytes[0];
+    pkg[15] = chk_bytes[1];
+
+    free(chk_bytes);
+    free(passw_bytes);
 
     return SUCCESS;
 }

@@ -96,6 +96,9 @@ uint32_t get_command_pkg_len(CommandType type) {
     case AuraLedConfig:
         len = AURA_LED_CONFIG_LEN;
         break;
+    case SetPwd:
+        len = SET_PWD_LEN;
+        break;
     }
 
     return len;
@@ -143,6 +146,9 @@ uint32_t get_command_reply_len(CommandType type) {
         break;
     case AuraLedConfig:
         len = AURA_LED_CONFIG_REPLY_LEN;
+        break;
+    case SetPwd:
+        len = SET_PWD_REPLY_LEN;
         break;
     }
 

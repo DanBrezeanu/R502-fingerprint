@@ -67,7 +67,10 @@ typedef enum CommandType {
     UpChar,
 
     /* Aura LED control */
-    AuraLedConfig
+    AuraLedConfig,
+
+    /* Set Module’s handshaking password */
+    SetPwd
 
 } CommandType;
 
@@ -161,6 +164,11 @@ typedef struct Command {
             uint8_t times;
         } aura_led_config;
 
+        struct SetPwd {
+            /* Password to be set */
+            uint32_t passw;
+        } set_pwd;
+
     } body;
 
 } Command;
@@ -250,6 +258,8 @@ typedef struct Reply {
         } up_char;
 
         struct AuraLedConfigReply {} aura_led_config;
+
+        struct SetPwdReply {} set_pwd;
 
     } body;
 
