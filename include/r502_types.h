@@ -7,6 +7,7 @@
 #include <r502_error_codes.h>
 
 #define FINGERPRINT_SIZE 1536
+#define PAGE_SIZE 32
 
 /* Driver for R502 device communication via USART */
 typedef struct Driver {
@@ -64,7 +65,11 @@ typedef enum CommandType {
     DeleteChar,
     
     /* Upload character file from one of the buffers to upper computer */
-    UpChar
+    UpChar,
+
+    WriteNotepad,
+
+    ReadNotepad
 
 } CommandType;
 
@@ -139,6 +144,15 @@ typedef struct Command {
             /* NOTE: Available options are 1 and 2. Any other value defaults to 2 */
             uint8_t buf;
         } up_char;
+
+        struct WriteNotepad {
+            uint8_t page_num;
+            uint8_t data[PAGE_SIZE];
+        } write_notepad;
+
+        struct ReadNotepad {
+            uint8_t page_num;
+        } read_notepad;
 
     } body;
 
@@ -227,6 +241,12 @@ typedef struct Reply {
             /* Fingerprint data */
             uint8_t fingerprint[FINGERPRINT_SIZE];
         } up_char;
+
+        struct WriteDataReply {} write_notepad;
+
+        struct ReadDataReply {
+            uint8_t data[PAGE_SIZE];
+        } read_notepad;
 
     } body;
 

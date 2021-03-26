@@ -6,7 +6,7 @@
 static int32_t (*cmd_func[])(uint8_t *, Command, int32_t) = {
     read_sys_para_pkg, vfy_pwd_pkg, gen_img_pkg, img2tz_pkg, search_pkg,
     load_char_pkg, match_pkg, template_num_pkg, reg_model_pkg, store_pkg,
-    delete_char_pkg, up_char_pkg
+    delete_char_pkg, up_char_pkg, write_notepad_pkg, read_notepad_pkg
 };
 
 int32_t get_basic_header(Driver *driver, uint8_t **basic_header) {
@@ -156,6 +156,24 @@ int32_t populate_command_args(Command *command, int32_t arg_num, va_list ap) {
         command->body.up_char.buf = va_arg(ap, uint32_t);
 
         break;
+
+    case WriteNotepad:
+        if (arg_num < 2)
+            goto error;
+        
+        command->body.write_notepad.page_num = va_arg(ap, uint32_t);
+        memcpy(command->body.write_notepad.data, va_arg(ap, uint8_t *), PAGE_SIZE);
+
+        break;
+    case ReadNotepad:
+        if (arg_num < 1)
+            goto error;
+        
+        command->body.read_notepad.page_num = va_arg(ap, uint32_t);
+        
+        break;
+    default:
+        goto error;
     }
 
     return SUCCESS;
@@ -509,6 +527,70 @@ static int32_t up_char_pkg(uint8_t *pkg, Command command, int32_t pkg_len) {
 
     /* Buffer number */
     pkg[10] = command.body.up_char.buf;
+
+    /* Checksum */
+    uint16_t chk = checksum(pkg, 6, pkg_len - 2);
+    uint8_t *chk_bytes = to_bytes_MSB(&chk, CHECKSUM_LEN);
+
+    pkg[11] = chk_bytes[0];
+    pkg[12] = chk_bytes[1];
+
+    free(chk_bytes);
+
+    return SUCCESS;
+}
+
+static int32_t write_notepad_pkg(uint8_t *pkg, Command command, int32_t pkg_len) {
+    // Required packet:
+    // basic_header                      [7]
+    // length   | 0x00 0x24              [2]
+    // instr    | 0x18                   [1]
+    // pagenum  | write_notepad.page_num [1]
+    // data     | write_notepad.data     [32]
+    // chksum   | checksum               [2]
+
+    /* Package length */
+    pkg[7] = 0x00;
+    pkg[8] = 0x24;
+
+    /* Instruction code */
+    pkg[9] = 0x18;
+
+    /* Page number of flash */
+    pkg[10] = command.body.write_notepad.page_num;
+
+    /* Data to store */
+    memcpy(pkg + 11, command.body.write_notepad.data, PAGE_SIZE);
+
+    /* Checksum */
+    uint16_t chk = checksum(pkg, 6, pkg_len - 2);
+    uint8_t *chk_bytes = to_bytes_MSB(&chk, CHECKSUM_LEN);
+
+    pkg[43] = chk_bytes[0];
+    pkg[44] = chk_bytes[1];
+
+    free(chk_bytes);
+
+    return SUCCESS;
+}
+
+static int32_t read_notepad_pkg(uint8_t *pkg, Command command, int32_t pkg_len) {
+    // Required packet:
+    // basic_header                      [7]
+    // length   | 0x00 0x4               [2]
+    // instr    | 0x19                   [1]
+    // pagenum  | read_notepad.page_num  [1]
+    // chksum   | checksum               [2]
+
+    /* Package length */
+    pkg[7] = 0x00;
+    pkg[8] = 0x04;
+
+    /* Instruction code */
+    pkg[9] = 0x19;
+
+    /* Buffer number */
+    pkg[10] = command.body.read_notepad.page_num;
 
     /* Checksum */
     uint16_t chk = checksum(pkg, 6, pkg_len - 2);
