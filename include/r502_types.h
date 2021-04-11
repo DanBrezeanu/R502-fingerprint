@@ -69,7 +69,9 @@ typedef enum CommandType {
 
     WriteNotepad,
 
-    ReadNotepad
+    ReadNotepad,
+
+    AuraLedConfig
 
 } CommandType;
 
@@ -153,6 +155,35 @@ typedef struct Command {
         struct ReadNotepad {
             uint8_t page_num;
         } read_notepad;
+
+        struct AuraLedConfig {
+            /*
+                Control code:
+                0x01 - breathing light
+                0x02 - flashing light
+                0x03 - light always on
+                0x04 - light always off
+                0x05 - light gradually on
+                0x06 - light gradually off
+            */
+            uint8_t ctrl;
+            /* Speed: 0x00-0xff, 256 gears, minimum 5s cycle */
+            uint8_t speed;
+            /*
+                Colors:
+                0x01 - Red
+                0x02 - Blue
+                0x03 - Purple
+            */
+            uint8_t color;
+            /* 
+                Number of cycles:
+                0 - infinite
+                1-255
+            */
+            uint8_t times;
+        } aura_led_config;
+        
 
     } body;
 
@@ -247,6 +278,9 @@ typedef struct Reply {
         struct ReadDataReply {
             uint8_t data[PAGE_SIZE];
         } read_notepad;
+
+        struct AuraLedConfigReply {} aura_led_config;
+        
 
     } body;
 

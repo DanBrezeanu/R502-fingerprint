@@ -6,7 +6,7 @@
 static int32_t (*cmd_func[])(uint8_t *, Command, int32_t) = {
     read_sys_para_pkg, vfy_pwd_pkg, gen_img_pkg, img2tz_pkg, search_pkg,
     load_char_pkg, match_pkg, template_num_pkg, reg_model_pkg, store_pkg,
-    delete_char_pkg, up_char_pkg, write_notepad_pkg, read_notepad_pkg
+    delete_char_pkg, up_char_pkg, write_notepad_pkg, read_notepad_pkg, aura_led_config
 };
 
 int32_t get_basic_header(Driver *driver, uint8_t **basic_header) {
@@ -139,6 +139,15 @@ int32_t populate_command_args(Command *command, int32_t arg_num, va_list ap) {
 
         command->body.store.buf = va_arg(ap, uint32_t);
         command->body.store.index = va_arg(ap, uint32_t);
+
+        break;
+    case AuraLedConfig:
+        if (arg_num < 4)
+            goto error;
+        command->body.aura_led_config.ctrl = va_arg(ap, uint32_t);
+        command->body.aura_led_config.speed = va_arg(ap, uint32_t);
+        command->body.aura_led_config.color = va_arg(ap, uint32_t);
+        command->body.aura_led_config.times = va_arg(ap, uint32_t);
 
         break;
     case DeleteChar:
@@ -470,6 +479,48 @@ static int32_t store_pkg(uint8_t *pkg, Command command, int32_t pkg_len) {
 
     return SUCCESS;
 }
+
+
+static int32_t aura_led_config(uint8_t *pkg, Command command, int32_t pkg_len) {
+    // Required packet:
+    // basic_header                         [7]
+    // length    | 0x00 0x07                [2]
+    // instr     | 0x35                     [1]
+    // control   | aura_led_config.ctrl     [1]
+    // speed     | aura_led_config.speed    [1]
+    // color     | aura_led_config.color    [1]
+    // times     | aura_led_config.times    [1]
+    // chksum    | checksum                 [2]
+    /* Package length */
+    pkg[7] = 0x00;
+    pkg[8] = 0x07;
+
+    /* Instruction code */
+    pkg[9] = 0x35;
+
+    /* Control code */
+    pkg[10] = command.body.aura_led_config.ctrl;
+
+    /* Speed */
+    pkg[11] = command.body.aura_led_config.speed;
+
+    /* Color */
+    pkg[12] = command.body.aura_led_config.color;
+
+    /* Times */
+    pkg[13] = command.body.aura_led_config.times;
+
+    /* Checksum */
+    uint16_t chk = checksum(pkg, 6, pkg_len - 2);
+    uint8_t *chk_bytes = to_bytes_MSB(&chk, CHECKSUM_LEN);
+    pkg[14] = chk_bytes[0];
+    pkg[15] = chk_bytes[1];
+
+    free(chk_bytes);
+
+    return SUCCESS;
+}
+
 
 static int32_t delete_char_pkg(uint8_t *pkg, Command command, int32_t pkg_len) {
     // Required packet:
