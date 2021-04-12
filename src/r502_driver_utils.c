@@ -141,9 +141,6 @@ uint32_t get_command_reply_len(CommandType type) {
     case Store:
         len = STORE_REPLY_LEN;
         break;
-    case AuraLedConfig:
-        len = AURA_LED_CONFIG_REPLY_LEN;
-        break;
     case DeleteChar:
         len = DELETE_CHAR_REPLY_LEN;
         break;
@@ -155,6 +152,9 @@ uint32_t get_command_reply_len(CommandType type) {
         break;
     case ReadNotepad:
         len = READ_NOTEPAD_REPLY_LEN;
+        break;
+    case AuraLedConfig:
+        len = AURA_LED_CONFIG_REPLY_LEN;
         break;
     }
 

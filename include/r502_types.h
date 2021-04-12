@@ -71,6 +71,7 @@ typedef enum CommandType {
 
     ReadNotepad,
 
+    /* Control the LED light of the sensor */
     AuraLedConfig
 
 } CommandType;
@@ -167,8 +168,10 @@ typedef struct Command {
                 0x06 - light gradually off
             */
             uint8_t ctrl;
+            
             /* Speed: 0x00-0xff, 256 gears, minimum 5s cycle */
             uint8_t speed;
+            
             /*
                 Colors:
                 0x01 - Red
@@ -176,6 +179,7 @@ typedef struct Command {
                 0x03 - Purple
             */
             uint8_t color;
+            
             /* 
                 Number of cycles:
                 0 - infinite

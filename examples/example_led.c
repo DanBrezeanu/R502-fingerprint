@@ -2,9 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <limits.h>
 #include <errno.h>
-
 
 int main(int argc, char *argv[]) {
     Driver *driver;
@@ -12,19 +10,23 @@ int main(int argc, char *argv[]) {
     int32_t err = SUCCESS;
 
     if (argc == 2 && strncmp(argv[1], "--help", 6) == 0) {
-        printf("Usage: %s <port> <control> <speed> <color> <times>\n", argv[0]);
-        printf("port - your port, ex: \"/dev/ttyS0\" if you're using UART on RaspberryPi\n");
-        printf("control   1: breathing light\n");
-        printf("          2: flashing light\n");
-        printf("          3: light always on\n");
-        printf("          4: light always off\n");
-        printf("          5: light gradually on\n");
-        printf("          6: light gradually off\n");
-        printf("speed     0-255 It is effective for breathing lamp and flashing lamp,Light gradually on,Light gradually off\n");
-        printf("color     1: red\n");
-        printf("          2: blue\n");
-        printf("          3: purple\n");
-        printf("times     1-255, 0 for infinite\n");
+        printf("Usage: %s <port> <control> <speed> <color> <times>\n"
+        "port - UART communication device\n"
+        "control:\n"
+        "     1 - breathing light\n"
+        "     2 - flashing light\n"
+        "     3 - light always on\n"
+        "     4 - light always off\n"
+        "     5 - light gradually on\n"
+        "     6 - light gradually off\n"
+        "speed:\n"
+        "     0-255 - It is effective for breathing lamp and flashing lamp,Light gradually on,Light gradually off\n"
+        "color:\n"
+        "     1 - red\n"
+        "     2 - blue\n"
+        "     3 - purple\n"
+        "times:\n"
+        "     1-255, 0 for infinite\n", argv[0]);
         return 0;
     }
 
@@ -33,79 +35,43 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-    char *controlPointer;
-    char *speedPointer;
-    char *colorPointer;
-    char *timesPointer;
+    int8_t *endptr;
 
-    int control;
-    int speed;
-    int color;
-    int times;
+    int32_t control;
+    int32_t speed;
+    int32_t color;
+    int32_t times;
 
     errno = 0;
-    long controlConv = strtol(argv[2], &controlPointer, 10);
+    control = strtol(argv[2], &endptr, 10);
 
     // Check for errors: e.g., the string does not represent an integer
-    // or the integer is larger than int
-    if (errno != 0 || *controlPointer != '\0' || controlConv > INT_MAX || controlConv < INT_MIN) {
-        printf("[ERROR] The option for the control is not an integer!\n");
+    if (errno != 0 || *endptr != '\0' || control < 1 || control > 6) {
+        printf("[ERROR] The option for the control is not valid, see %s --help for help\n", argv[0]);
         return -1;
-    } else {
-        control = controlConv;
     }
 
     errno = 0;
-    long speedConv   = strtol(argv[3], &speedPointer, 10);
+    speed = strtol(argv[3], &endptr, 10);
 
-    if (errno != 0 || *speedPointer != '\0' || speedConv > INT_MAX || speedConv < INT_MIN) {
-        printf("[ERROR] The option for the speed is not an integer!\n");
+    if (errno != 0 || *endptr != '\0' || speed > 255 || speed < 0) {
+        printf("[ERROR] The option for the speed is not valid, see %s --help for help\n", argv[0]);
         return -1;
-    } else {
-        speed = speedConv;
     }
 
     errno = 0;
-    long colorConv   = strtol(argv[4], &colorPointer, 10);
+    color = strtol(argv[4], &endptr, 10);
 
-    if (errno != 0 || *colorPointer != '\0' || colorConv > INT_MAX || colorConv < INT_MIN) {
-        printf("[ERROR] The option for the color is not an integer!\n");
+    if (errno != 0 || *endptr != '\0' || color < 1 || color > 3) {
+        printf("[ERROR] The option for the color is not valid, see %s --help for help\n", argv[0]);
         return -1;
-    } else {
-        color = colorConv;
     }
 
     errno = 0;
-    long timesConv   = strtol(argv[5], &timesPointer, 10);
+    times = strtol(argv[5], &endptr, 10);
 
-    if (errno != 0 || *timesPointer != '\0' || timesConv > INT_MAX || timesConv < INT_MIN) {
-        printf("[ERROR] The option for times is not an integer!\n");
-        return -1;
-    } else {
-        times = timesConv;
-    }
-
-    // Checking control variable
-    if (control != 1 && control != 2 && control != 3 && control != 4 && control != 5 && control != 6) {
-        printf("Control variable not set properly see %s --help for help\n", argv[0]);
-        return -1;
-    }
-
-    // Checking speed variable
-    if (speed > 255 || speed < 0) {
-        printf("Speed variable not set properly see %s --help for help\n", argv[0]);
-        return -1;
-    }
-    
-    //Checking color variable
-    if (color != 1 && color != 2 && color != 3) {
-        printf("Color variable not set properly see %s --help for help\n", argv[0]);
-        return -1;
-    }
-
-    // Checking times variable
-    if (times > 255 || times < 0) {
-        printf("Times variable not set properly see %s --help for help\n", argv[0]);
+    if (errno != 0 || *endptr != '\0' || times > 255 || times < 0) {
+        printf("[ERROR] The option for times is not valid, see %s --help for help\n", argv[0]);
         return -1;
     }
 
@@ -125,10 +91,11 @@ int main(int argc, char *argv[]) {
     if (err != SUCCESS)
         goto error;
 
-    printf("[INFO]  Executing command with the following parameters: %d %d %d %d\n", control, speed, color, times);
+    printf("[INFO]  Executing command: %s %d %d %d %d\n", argv[0], control, speed, color, times);
     err = call_cmd(driver, AuraLedConfig, &reply, 4, control, speed, color, times);
     if (err != SUCCESS)
         goto error;
+    return 0;
 
 error:
     printf("[ERROR] Error raised: 0x%.2X\n", err);

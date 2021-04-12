@@ -64,9 +64,6 @@ static int32_t reg_model_pkg(uint8_t *pkg, Command command, int32_t pkg_len);
 /* Build package for Store command */
 static int32_t store_pkg(uint8_t *pkg, Command command, int32_t pkg_len);
 
-/* Build package for AuraLedConfig */
-static int32_t aura_led_config(uint8_t *pkg, Command command, int32_t pkg_len);
-
 /* Build package for DeleteChar command */
 static int32_t delete_char_pkg(uint8_t *pkg, Command command, int32_t pkg_len);
 
@@ -79,5 +76,7 @@ static int32_t write_notepad_pkg(uint8_t *pkg, Command command, int32_t pkg_len)
 /* Build package for ReadNotepad command */
 static int32_t read_notepad_pkg(uint8_t *pkg, Command command, int32_t pkg_len);
 
+/* Build package for AuraLedConfig */
+static int32_t aura_led_config(uint8_t *pkg, Command command, int32_t pkg_len);
 
 #endif
