@@ -7,20 +7,21 @@
 #define MAX_DATA_LENGTH 128
 
 /* Reply package lengths */
-#define READ_SYS_PARA_REPLY_LEN  28
-#define VFY_PWD_REPLY_LEN        12
-#define GEN_IMG_REPLY_LEN        12
-#define IMG2TZ_REPLY_LEN         12
-#define SEARCH_REPLY_LEN         16
-#define LOAD_CHAR_REPLY_LEN      12
-#define MATCH_REPLY_LEN          14
-#define TEMPLATE_NUM_REPLY_LEN   14
-#define REG_MODEL_REPLY_LEN      12
-#define STORE_REPLY_LEN          12
-#define DELETE_CHAR_REPLY_LEN    12
-#define UP_CHAR_REPLY_LEN        12
-#define WRITE_NOTEPAD_REPLY_LEN  12
-#define READ_NOTEPAD_REPLY_LEN   44
+#define READ_SYS_PARA_REPLY_LEN   28
+#define VFY_PWD_REPLY_LEN         12
+#define GEN_IMG_REPLY_LEN         12
+#define IMG2TZ_REPLY_LEN          12
+#define SEARCH_REPLY_LEN          16
+#define LOAD_CHAR_REPLY_LEN       12
+#define MATCH_REPLY_LEN           14
+#define TEMPLATE_NUM_REPLY_LEN    14
+#define REG_MODEL_REPLY_LEN       12
+#define STORE_REPLY_LEN           12
+#define AURA_LED_CONFIG_REPLY_LEN 12
+#define DELETE_CHAR_REPLY_LEN     12
+#define UP_CHAR_REPLY_LEN         12
+#define WRITE_NOTEPAD_REPLY_LEN   12
+#define READ_NOTEPAD_REPLY_LEN    44
 
 /* Additional reply package lengths */
 #define UP_CHAR_ADDITIONAL_REPLY_LEN  1536

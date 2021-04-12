@@ -99,6 +99,9 @@ uint32_t get_command_pkg_len(CommandType type) {
     case ReadNotepad:
         len = READ_NOTEPAD_LEN;
         break;
+    case AuraLedConfig:
+        len = AURA_LED_CONFIG_LEN;
+        break;
     }
 
     return len;
@@ -149,6 +152,9 @@ uint32_t get_command_reply_len(CommandType type) {
         break;
     case ReadNotepad:
         len = READ_NOTEPAD_REPLY_LEN;
+        break;
+    case AuraLedConfig:
+        len = AURA_LED_CONFIG_REPLY_LEN;
         break;
     }
 
