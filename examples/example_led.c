@@ -51,7 +51,6 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-    errno = 0;
     speed = strtol(argv[3], &endptr, 10);
 
     if (errno != 0 || *endptr != '\0' || speed > 255 || speed < 0) {
@@ -59,7 +58,6 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-    errno = 0;
     color = strtol(argv[4], &endptr, 10);
 
     if (errno != 0 || *endptr != '\0' || color < 1 || color > 3) {
@@ -67,7 +65,6 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-    errno = 0;
     times = strtol(argv[5], &endptr, 10);
 
     if (errno != 0 || *endptr != '\0' || times > 255 || times < 0) {
