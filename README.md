@@ -1,3 +1,5 @@
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/36aaa6b1f5e94ca6a2e3f865d706dee6)](https://www.codacy.com/gh/DanBrezeanu/R502-fingerprint/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=DanBrezeanu/R502-fingerprint&amp;utm_campaign=Badge_Grade)
+
 # R502-fingerprint
 
 Lightweight C library for controlling the HZGROW R502 capacitive fingerprint sensor.
