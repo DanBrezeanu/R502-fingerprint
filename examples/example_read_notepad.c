@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
     if (err != SUCCESS)
         goto error;
 
-    printf("[INFO]  Data read succesfully!");
+    printf("[INFO]  Data read succesfully!\n");
     printf("[INFO]  Data hexdump:\n");
     for (uint32_t i = 0; i < PAGE_SIZE; ++i) {
         if (i % 16 == 0 && i)
