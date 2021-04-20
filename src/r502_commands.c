@@ -6,8 +6,8 @@
 static int32_t (*cmd_func[])(uint8_t *, Command, int32_t) = {
     read_sys_para_pkg, vfy_pwd_pkg, gen_img_pkg, img2tz_pkg, search_pkg,
     load_char_pkg, match_pkg, template_num_pkg, reg_model_pkg, store_pkg,
-    delete_char_pkg, up_char_pkg, aura_led_config_pkg, set_pwd_pkg, set_addr_pkg, 
-    handshake_pkg
+    delete_char_pkg, up_char_pkg, write_notepad_pkg, read_notepad_pkg, aura_led_config_pkg,
+    set_pwd_pkg, set_addr_pkg, handshake_pkg
 };
 
 int32_t get_basic_header(Driver *driver, uint8_t **basic_header) {
@@ -48,15 +48,14 @@ int32_t get_command_package(Driver *driver, Command command, int32_t arg_num, va
 
     /* Populate the command structure with the arguments provided */
     err = populate_command_args(&command, arg_num, ap);
-    if (err != SUCCESS) {
+    if (err != SUCCESS)
         return err;
-    }
+    
     /* Get a general header */
     err = get_basic_header(driver, &header);
-    if (err != SUCCESS) {
+    if (err != SUCCESS)
         return err;
-    }
-
+    
     /* Get the length of the command package */
     int32_t pkg_len = get_command_pkg_len(command.command_type);
 
@@ -68,9 +67,9 @@ int32_t get_command_package(Driver *driver, Command command, int32_t arg_num, va
 
     /* Populate the rest of the package with the actual information */
     err = cmd_func[command.command_type](package, command, pkg_len);
-    if (err != SUCCESS) {
+    if (err != SUCCESS)
         goto error;
-    }
+    
     /* Save the command package in the driver structure */
     if (driver->cmd_buf != NULL)
         free(driver->cmd_buf);
@@ -159,10 +158,24 @@ int32_t populate_command_args(Command *command, int32_t arg_num, va_list ap) {
         command->body.up_char.buf = va_arg(ap, uint32_t);
 
         break;
+    case WriteNotepad:
+        if (arg_num < 2)
+            goto error;
+
+        command->body.write_notepad.page_num = va_arg(ap, uint32_t);
+        memcpy(command->body.write_notepad.data, va_arg(ap, uint8_t *), PAGE_SIZE);
+
+        break;
+    case ReadNotepad:
+        if (arg_num < 1)
+            goto error;
+
+        command->body.read_notepad.page_num = va_arg(ap, uint32_t);
+
+        break;
     case AuraLedConfig:
         if (arg_num < 4)
             goto error;
-
         command->body.aura_led_config.control = va_arg(ap, uint32_t);
         command->body.aura_led_config.speed = va_arg(ap, uint32_t);
         command->body.aura_led_config.color = va_arg(ap, uint32_t);
@@ -185,6 +198,10 @@ int32_t populate_command_args(Command *command, int32_t arg_num, va_list ap) {
         break;
     case HandShake:
         break;
+    
+    default:
+        goto error;    
+
     }
     
 
@@ -552,6 +569,70 @@ static int32_t up_char_pkg(uint8_t *pkg, Command command, int32_t pkg_len) {
     return SUCCESS;
 }
 
+static int32_t write_notepad_pkg(uint8_t *pkg, Command command, int32_t pkg_len) {
+    // Required packet:
+    // basic_header                      [7]
+    // length   | 0x00 0x24              [2]
+    // instr    | 0x18                   [1]
+    // pagenum  | write_notepad.page_num [1]
+    // data     | write_notepad.data     [32]
+    // chksum   | checksum               [2]
+
+    /* Package length */
+    pkg[7] = 0x00;
+    pkg[8] = 0x24;
+
+    /* Instruction code */
+    pkg[9] = 0x18;
+
+    /* Page number of flash */
+    pkg[10] = command.body.write_notepad.page_num;
+
+    /* Data to store */
+    memcpy(pkg + 11, command.body.write_notepad.data, PAGE_SIZE);
+
+    /* Checksum */
+    uint16_t chk = checksum(pkg, 6, pkg_len - 2);
+    uint8_t *chk_bytes = to_bytes_MSB(&chk, CHECKSUM_LEN);
+
+    pkg[43] = chk_bytes[0];
+    pkg[44] = chk_bytes[1];
+
+    free(chk_bytes);
+
+    return SUCCESS;
+}
+
+static int32_t read_notepad_pkg(uint8_t *pkg, Command command, int32_t pkg_len) {
+    // Required packet:
+    // basic_header                      [7]
+    // length   | 0x00 0x4               [2]
+    // instr    | 0x19                   [1]
+    // pagenum  | read_notepad.page_num  [1]
+    // chksum   | checksum               [2]
+
+    /* Package length */
+    pkg[7] = 0x00;
+    pkg[8] = 0x04;
+
+    /* Instruction code */
+    pkg[9] = 0x19;
+
+    /* Buffer number */
+    pkg[10] = command.body.read_notepad.page_num;
+
+    /* Checksum */
+    uint16_t chk = checksum(pkg, 6, pkg_len - 2);
+    uint8_t *chk_bytes = to_bytes_MSB(&chk, CHECKSUM_LEN);
+
+    pkg[11] = chk_bytes[0];
+    pkg[12] = chk_bytes[1];
+
+    free(chk_bytes);
+
+    return SUCCESS;
+}
+
 static int32_t aura_led_config_pkg(uint8_t *pkg, Command command, int32_t pkg_len) {
     // Required packet:
     // basic_header                      [7]
@@ -571,7 +652,7 @@ static int32_t aura_led_config_pkg(uint8_t *pkg, Command command, int32_t pkg_le
     pkg[9] = 0x35;
 
     /* Control Code */
-    pkg[10] = command.body.aura_led_config.control;
+    pkg[10] = command.body.aura_led_config.ctrl;
 
     /* Speed */
     pkg[11] = command.body.aura_led_config.speed;

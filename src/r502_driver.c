@@ -112,7 +112,6 @@ int32_t call_cmd(Driver *driver, CommandType type, Reply *reply, int32_t arg_num
     if (err != SUCCESS || reply->conf_code != SUCCESS) {
         if (reply->conf_code != SUCCESS)
             err = reply->conf_code;
-
         goto error;
     }
 
