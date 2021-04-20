@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-    int8_t *endptr;
+    char *endptr;
 
     int32_t control;
     int32_t speed;
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
 
     printf("[INFO]  Using port %s\n", argv[1]);
     printf("[INFO]  Initializing device communication\n");
-    err = init_driver(argv[1], 0xFFFFFFFF, &driver);
+    err = init_driver((uint8_t *) argv[1], 0xFFFFFFFF, &driver);
     if (err != SUCCESS)
         goto error;
 

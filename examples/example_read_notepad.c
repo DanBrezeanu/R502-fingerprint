@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
 
     printf("[INFO]  Using port %s\n", argv[2]);
     printf("[INFO]  Initializing device communication\n");
-    err = init_driver(argv[2], 0xFFFFFFFF, &driver);
+    err = init_driver((uint8_t *) argv[2], 0xFFFFFFFF, &driver);
     if (err != SUCCESS)
         goto error;
 
