@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
     printf("\t|   .Security level:            %u\t\t|\n", security_level);
     printf("\t|   .Device address:            %u\t\t|\n", device_address);
     printf("\t|   .Data packet size:          %u\t\t|\n", packet_size);
-    printf("\t|   .Baud settings:             %u bps (%u)\t|\n", baud_setting*9600, baud_setting);
+    printf("\t|   .Baud settings:             %i bps (%u)\t|\n", baud_setting*9600, baud_setting);
     printf("\t*-----------------------------------------------*\n");
     return 0;
 
