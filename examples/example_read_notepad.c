@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
     err = call_cmd(driver, ReadNotepad, &reply, 1, page_num);
     if (err != SUCCESS)
         goto error;
-
+  
     printf("[INFO]  Data read succesfully!\n");
     printf("[INFO]  Data hexdump:\n");
     for (uint32_t i = 0; i < PAGE_SIZE; ++i) {

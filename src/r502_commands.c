@@ -176,6 +176,7 @@ int32_t populate_command_args(Command *command, int32_t arg_num, va_list ap) {
     case AuraLedConfig:
         if (arg_num < 4)
             goto error;
+        
         command->body.aura_led_config.ctrl = va_arg(ap, uint32_t);
         command->body.aura_led_config.speed = va_arg(ap, uint32_t);
         command->body.aura_led_config.color = va_arg(ap, uint32_t);
@@ -200,8 +201,7 @@ int32_t populate_command_args(Command *command, int32_t arg_num, va_list ap) {
         break;
     
     default:
-        goto error;    
-
+        goto error;
     }
     
 
@@ -657,7 +657,7 @@ static int32_t aura_led_config_pkg(uint8_t *pkg, Command command, int32_t pkg_le
     /* Speed */
     pkg[11] = command.body.aura_led_config.speed;
 
-    /* Color Index */
+    /* Color */
     pkg[12] = command.body.aura_led_config.color;
 
     /* Times */

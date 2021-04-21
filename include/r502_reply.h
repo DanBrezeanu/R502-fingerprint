@@ -42,7 +42,6 @@
 #define GET_RANDOM_CODE_REPLY_LEN   16
 #define READ_INF_PAGE_REPLY_LEN     12
 
-
 /* Additional reply package lengths */
 #define UP_CHAR_ADDITIONAL_REPLY_LEN    1536
 #define DOWN_CHAR_ADDITIONAL_REPLY_LEN  1536

@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     }
 
     char *endptr;
-
+    
     int32_t control;
     int32_t speed;
     int32_t color;
@@ -80,6 +80,7 @@ int main(int argc, char *argv[]) {
 
     printf("[INFO]  HandShaking device\n");
     err = call_cmd(driver, HandShake, &reply, 0);
+
     if (err != SUCCESS)
         goto error;
 

@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 
     return 0;
 
-error:
-    printf("[ERROR] Error raised: 0x%.2X\n", err);
-    return err;
-}
+    error:
+        printf("[ERROR] Error raised: 0x%.2X\n", err);
+        return err;
+    }

@@ -111,6 +111,15 @@ uint32_t get_command_pkg_len(CommandType type) {
     case HandShake:
         len = HANDSHAKE_LEN;
         break;
+    case WriteNotepad:
+        len = WRITE_NOTEPAD_LEN;
+        break;
+    case ReadNotepad:
+        len = READ_NOTEPAD_LEN;
+        break;
+    case AuraLedConfig:
+        len = AURA_LED_CONFIG_LEN;
+        break;
     }
 
     return len;
