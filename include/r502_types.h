@@ -181,7 +181,6 @@ typedef struct Command {
             /* Speed: 0x00-0xff, 256 gears, minimum 5s cycle */
             /* NOTE: It is effective for breathing lamp and flashing lamp,Light gradually on,Light gradually off */            
             uint8_t speed;
-
             /*
                 Colors:
                 0x01 - Red
@@ -189,7 +188,7 @@ typedef struct Command {
                 0x03 - Purple
             */
             uint8_t color;
-
+          
             /* 
                 Number of cycles:
                 0 - infinite
