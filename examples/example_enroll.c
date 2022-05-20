@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
     uint16_t index = reply.body.template_num.index;
 
     printf("[INFO]  Enrolling fingerprint to index %u\n", index);
-    
+
     printf("[INFO]  [1/2] Place finger on reader\n");
     sleep(2);
     err = call_cmd(driver, GenImg, &reply, 0);
@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
     err = call_cmd(driver, RegModel, &reply, 0);
     if (err != SUCCESS)
         goto error;
-    
+
     printf("[INFO]  Saving the fingerprint template\n");
     err = call_cmd(driver, Store, &reply, 2, 1, index);
     if (err != SUCCESS)

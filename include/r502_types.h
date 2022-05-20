@@ -62,7 +62,7 @@ typedef enum CommandType {
 
     /* Deletes stores fingerprints from the library starting from an index */
     DeleteChar,
-    
+
     /* Upload character file from one of the buffers to upper computer */
     UpChar,
 
@@ -158,7 +158,7 @@ typedef struct Command {
             uint8_t control;
 
             /* Speed: 0x00 to 0xff, 256 gears, minimum 5s cycle */
-            /* NOTE: It is effective for breathing lamp and flashing lamp,Light gradually on,Light gradually off */            
+            /* NOTE: It is effective for breathing lamp and flashing lamp,Light gradually on,Light gradually off */
             uint8_t speed;
 
             /* Color Index */

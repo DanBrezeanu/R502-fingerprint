@@ -6,7 +6,7 @@
 static int32_t (*cmd_func[])(uint8_t *, Command, int32_t) = {
     read_sys_para_pkg, vfy_pwd_pkg, gen_img_pkg, img2tz_pkg, search_pkg,
     load_char_pkg, match_pkg, template_num_pkg, reg_model_pkg, store_pkg,
-    delete_char_pkg, up_char_pkg, aura_led_config_pkg, set_pwd_pkg, set_addr_pkg, 
+    delete_char_pkg, up_char_pkg, aura_led_config_pkg, set_pwd_pkg, set_addr_pkg,
     handshake_pkg
 };
 
@@ -186,7 +186,7 @@ int32_t populate_command_args(Command *command, int32_t arg_num, va_list ap) {
     case HandShake:
         break;
     }
-    
+
 
     return SUCCESS;
 
