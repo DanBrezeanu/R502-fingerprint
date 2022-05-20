@@ -203,7 +203,7 @@ int32_t populate_command_args(Command *command, int32_t arg_num, va_list ap) {
     default:
         goto error;
     }
-    
+
 
     return SUCCESS;
 

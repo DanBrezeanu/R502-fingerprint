@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
     err = call_cmd(driver, ReadSysPara, &reply, 0);
     if (err != SUCCESS)
         goto error;
-    
+
     uint16_t status_register = reply.body.read_sys_para.status_register;
     uint16_t sys_id_code = reply.body.read_sys_para.sys_id_code;
     uint16_t library_size = reply.body.read_sys_para.library_size;

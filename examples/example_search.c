@@ -39,15 +39,15 @@ int main(int argc, char *argv[]) {
     err = call_cmd(driver, Img2Tz, &reply, 1, 1);
     if (err != SUCCESS)
         goto error;
-    
+
     printf("[INFO]  Searching the library for a match\n");
     err = call_cmd(driver, Search, &reply, 3, 1, 0, 0xFF);
     if (err != SUCCESS)
         goto error;
 
-    printf("[INFO]  Finger found. Index = %u    Match Score = %u\n", 
+    printf("[INFO]  Finger found. Index = %u    Match Score = %u\n",
         reply.body.search.index, reply.body.search.match_score);
-    
+
     destroy_driver(driver);
 
     return 0;

@@ -19,7 +19,7 @@ For more information see [wiki](https://github.com/DanBrezeanu/R502-fingerprint/
 
     sudo apt install libserialport0 libserialport-dev
     sudo make install
-    
+
 For building examples: &nbsp; `make examples `
 
 ## About

@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     err = call_cmd(driver, HandShake, &reply, 0);
     if (err != SUCCESS)
         goto error;
-    
+
     printf("[INFO]  Verifying password (default: 0x00000000)\n");
     err = call_cmd(driver, VfyPwd, &reply, 1, 0x00000000);
     if (err != SUCCESS)
@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
     err = call_cmd(driver, SetAddr, &reply, 1, 0x12345678);
     if (err != SUCCESS)
         goto error;
-    
+
     printf("[INFO]  Initializing device communication\n");
     err = init_driver((uint8_t *) argv[1], 0x12345678, &driver);
     if (err != SUCCESS)
@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
     err = call_cmd(driver, HandShake, &reply, 0);
     if (err != SUCCESS)
         goto error;
-    
+
     printf("[INFO]  Verifying password (default: 0x00000000)\n");
     err = call_cmd(driver, VfyPwd, &reply, 1, 0x00000000);
     if (err != SUCCESS)
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
     err = init_driver((uint8_t *) argv[1], 0xFFFFFFFF, &driver);
     if (err != SUCCESS)
         goto error;
-    
+
     printf("[INFO]  Verifying password (default: 0x00000000)\n");
     err = call_cmd(driver, VfyPwd, &reply, 1, 0x00000000);
     if (err != SUCCESS)
