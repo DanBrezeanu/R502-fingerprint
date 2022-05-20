@@ -35,6 +35,11 @@ int32_t parse_reply(CommandType type, uint8_t *data, Reply *reply) {
         err = template_num_reply(data, reply);
         if (err != SUCCESS)
             return REPLY_FAIL;
+        break;    
+    case ReadNotepad:
+        err = read_notepad_reply(data, reply);
+        if (err != SUCCESS)
+            return REPLY_FAIL;
         break;
     default:
         break;
@@ -129,6 +134,21 @@ static int32_t template_num_reply(uint8_t *data, Reply *reply) {
     // chksum      | checksum                      [2]
 
     reply->body.template_num.index = from_bytes_MSB(data, 10, 12);
+
+    return SUCCESS;
+}
+
+static int32_t read_notepad_reply(uint8_t *data, Reply *reply) {
+    // Expected packet:
+    // headr       | 0xEF 0x01                     [2]
+    // addr        | device.address                [4]
+    // ident       | 0x07                          [1]
+    // length      | 0x00 0x23                     [2]
+    // confrm      | reply.conf_code               [1]
+    // data        | read_notepad.data             [32]
+    // chksum      | checksum                      [2]
+
+    memcpy(reply->body.read_notepad.data, data + 10, PAGE_SIZE);
 
     return SUCCESS;
 }

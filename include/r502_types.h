@@ -7,6 +7,7 @@
 #include <r502_error_codes.h>
 
 #define FINGERPRINT_SIZE 1536
+#define PAGE_SIZE 32
 
 /* Driver for R502 device communication via USART */
 typedef struct Driver {
@@ -66,7 +67,11 @@ typedef enum CommandType {
     /* Upload character file from one of the buffers to upper computer */
     UpChar,
 
-    /* Aura LED control */
+    WriteNotepad,
+
+    ReadNotepad,
+
+    /* Control the LED light of the sensor */
     AuraLedConfig,
 
     /* Set Module’s handshaking password */
@@ -152,20 +157,44 @@ typedef struct Command {
             uint8_t buf;
         } up_char;
 
+        struct WriteNotepad {
+            uint8_t page_num;
+            uint8_t data[PAGE_SIZE];
+        } write_notepad;
+
+        struct ReadNotepad {
+            uint8_t page_num;
+        } read_notepad;
+
         struct AuraLedConfig {
-            /* Control Code */
-            /* NOTE: 1 > breathing light | 2 > flashing light | 3 > light always on | 4 > light always off | 5 > light gradually on | 6 > light gradually off | Any other value defaults to 1 */
-            uint8_t control;
+            /*
+                Control code:
+                0x01 - breathing light
+                0x02 - flashing light
+                0x03 - light always on
+                0x04 - light always off
+                0x05 - light gradually on
+                0x06 - light gradually off
+            */
+            uint8_t ctrl;
 
             /* Speed: 0x00 to 0xff, 256 gears, minimum 5s cycle */
             /* NOTE: It is effective for breathing lamp and flashing lamp,Light gradually on,Light gradually off */
+
             uint8_t speed;
-
-            /* Color Index */
-            /* NOTE: 1 > red | 2 > blue | 3 > purple | Any other value defaults to 1 */
+            /*
+                Colors:
+                0x01 - Red
+                0x02 - Blue
+                0x03 - Purple
+            */
             uint8_t color;
-
-            /* Number of cycles: 0 to infinite > 1 to 255. */
+          
+            /* 
+                Number of cycles:
+                0 - infinite
+                1-255
+            */
             /* NOTE: It is effective for with breathing light and flashing light */
             uint8_t times;
         } aura_led_config;
@@ -270,6 +299,12 @@ typedef struct Reply {
             uint8_t fingerprint[FINGERPRINT_SIZE];
         } up_char;
 
+        struct WriteDataReply {} write_notepad;
+
+        struct ReadDataReply {
+            uint8_t data[PAGE_SIZE];
+        } read_notepad;
+        
         struct AuraLedConfigReply {} aura_led_config;
 
         struct SetPwdReply {} set_pwd;
