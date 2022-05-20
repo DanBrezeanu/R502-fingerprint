@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
 
     printf("[INFO]  Using port %s\n", argv[3]);
     printf("[INFO]  Initializing device communication\n");
-    err = init_driver(argv[3], 0xFFFFFFFF, &driver);
+    err = init_driver((uint8_t *) argv[3], 0xFFFFFFFF, &driver);
     if (err != SUCCESS)
         goto error;
 
@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 
     return 0;
 
-error:
-    printf("[ERROR] Error raised: 0x%.2X\n", err);
-    return err;
-}
+    error:
+        printf("[ERROR] Error raised: 0x%.2X\n", err);
+        return err;
+    }

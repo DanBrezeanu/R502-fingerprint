@@ -35,8 +35,8 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-    int8_t *endptr;
-
+    char *endptr;
+    
     int32_t control;
     int32_t speed;
     int32_t color;
@@ -74,12 +74,13 @@ int main(int argc, char *argv[]) {
 
     printf("[INFO]  Using port %s\n", argv[1]);
     printf("[INFO]  Initializing device communication\n");
-    err = init_driver(argv[1], 0xFFFFFFFF, &driver);
+    err = init_driver((uint8_t *) argv[1], 0xFFFFFFFF, &driver);
     if (err != SUCCESS)
         goto error;
 
-    printf("[INFO]  Checking device status\n");
-    err = call_cmd(driver, ReadSysPara, &reply, 0);
+    printf("[INFO]  HandShaking device\n");
+    err = call_cmd(driver, HandShake, &reply, 0);
+
     if (err != SUCCESS)
         goto error;
 

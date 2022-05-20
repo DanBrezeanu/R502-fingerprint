@@ -92,7 +92,7 @@ uint32_t get_command_pkg_len(CommandType type) {
         break;
     case UpChar:
         len = UP_CHAR_LEN;
-        break;
+        break;    
     case WriteNotepad:
         len = WRITE_NOTEPAD_LEN;
         break;
@@ -101,6 +101,15 @@ uint32_t get_command_pkg_len(CommandType type) {
         break;
     case AuraLedConfig:
         len = AURA_LED_CONFIG_LEN;
+        break;
+    case SetPwd:
+        len = SET_PWD_LEN;
+        break;
+    case SetAddr:
+        len = SET_ADDR_LEN;
+        break;
+    case HandShake:
+        len = HANDSHAKE_LEN;
         break;
     }
 
@@ -155,6 +164,15 @@ uint32_t get_command_reply_len(CommandType type) {
         break;
     case AuraLedConfig:
         len = AURA_LED_CONFIG_REPLY_LEN;
+        break;
+    case SetPwd:
+        len = SET_PWD_REPLY_LEN;
+        break;
+    case SetAddr:
+        len = SET_ADDR_REPLY_LEN;
+        break;
+    case HandShake:
+        len = HANDSHAKE_REPLY_LEN;
         break;
     }
 

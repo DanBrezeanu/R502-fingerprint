@@ -33,7 +33,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 $(EXAMPLE_DIR)/%: $(EXAMPLE_DIR)/%.c
 	$(CC) $(CFLAGS) -L./ $(INCLUDE) $< -o $@ -lr502 $(LIBS)
 
-$(EXAMPLE_DIR): $(EXAMPLE_BIN) 
+$(EXAMPLE_DIR): $(EXAMPLE_BIN)
 
 create_obj_dir:
 	@$(MKDIR) $(OBJ_DIR)

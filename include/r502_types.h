@@ -63,7 +63,7 @@ typedef enum CommandType {
 
     /* Deletes stores fingerprints from the library starting from an index */
     DeleteChar,
-    
+
     /* Upload character file from one of the buffers to upper computer */
     UpChar,
 
@@ -72,7 +72,16 @@ typedef enum CommandType {
     ReadNotepad,
 
     /* Control the LED light of the sensor */
-    AuraLedConfig
+    AuraLedConfig,
+
+    /* Set Module’s handshaking password */
+    SetPwd,
+
+    /* Set Module address */
+    SetAddr,
+
+    /* Send handshake instructions to the module. */
+    HandShake
 
 } CommandType;
 
@@ -168,10 +177,11 @@ typedef struct Command {
                 0x06 - light gradually off
             */
             uint8_t ctrl;
-            
-            /* Speed: 0x00-0xff, 256 gears, minimum 5s cycle */
+
+            /* Speed: 0x00 to 0xff, 256 gears, minimum 5s cycle */
+            /* NOTE: It is effective for breathing lamp and flashing lamp,Light gradually on,Light gradually off */
+
             uint8_t speed;
-            
             /*
                 Colors:
                 0x01 - Red
@@ -179,15 +189,27 @@ typedef struct Command {
                 0x03 - Purple
             */
             uint8_t color;
-            
+          
             /* 
                 Number of cycles:
                 0 - infinite
                 1-255
             */
+            /* NOTE: It is effective for with breathing light and flashing light */
             uint8_t times;
         } aura_led_config;
-        
+
+        struct SetPwd {
+            /* Password to be set */
+            uint32_t passw;
+        } set_pwd;
+
+        struct SetAddr {
+            /* Address to be set */
+            uint32_t addr;
+        } set_addr;
+
+        struct HandShake {} handshake;
 
     } body;
 
@@ -282,9 +304,14 @@ typedef struct Reply {
         struct ReadDataReply {
             uint8_t data[PAGE_SIZE];
         } read_notepad;
-
-        struct AuraLedConfigReply {} aura_led_config;
         
+        struct AuraLedConfigReply {} aura_led_config;
+
+        struct SetPwdReply {} set_pwd;
+
+        struct SetAddrReply {} set_addr;
+
+        struct HandShakeReply {} handshake;
 
     } body;
 

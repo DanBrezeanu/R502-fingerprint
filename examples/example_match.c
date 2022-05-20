@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
     err = call_cmd(driver, LoadChar, &reply, 2, 2, 0);
     if (err != SUCCESS)
         goto error;
-    
+  
     printf("[INFO]  Perform match between the two buffers\n");
     err = call_cmd(driver, Match, &reply, 0);
     if (err != SUCCESS)
@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
 
     printf("[INFO]  Match Score = %u\n", 
         reply.body.match.match_score);
-    
+
     destroy_driver(driver);
 
     return 0;

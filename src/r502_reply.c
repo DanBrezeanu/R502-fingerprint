@@ -35,7 +35,7 @@ int32_t parse_reply(CommandType type, uint8_t *data, Reply *reply) {
         err = template_num_reply(data, reply);
         if (err != SUCCESS)
             return REPLY_FAIL;
-        break;
+        break;    
     case ReadNotepad:
         err = read_notepad_reply(data, reply);
         if (err != SUCCESS)

@@ -6,7 +6,8 @@
 static int32_t (*cmd_func[])(uint8_t *, Command, int32_t) = {
     read_sys_para_pkg, vfy_pwd_pkg, gen_img_pkg, img2tz_pkg, search_pkg,
     load_char_pkg, match_pkg, template_num_pkg, reg_model_pkg, store_pkg,
-    delete_char_pkg, up_char_pkg, write_notepad_pkg, read_notepad_pkg, aura_led_config
+    delete_char_pkg, up_char_pkg, write_notepad_pkg, read_notepad_pkg, aura_led_config_pkg,
+    set_pwd_pkg, set_addr_pkg, handshake_pkg
 };
 
 int32_t get_basic_header(Driver *driver, uint8_t **basic_header) {
@@ -49,12 +50,12 @@ int32_t get_command_package(Driver *driver, Command command, int32_t arg_num, va
     err = populate_command_args(&command, arg_num, ap);
     if (err != SUCCESS)
         return err;
-
+    
     /* Get a general header */
     err = get_basic_header(driver, &header);
     if (err != SUCCESS)
         return err;
-
+    
     /* Get the length of the command package */
     int32_t pkg_len = get_command_pkg_len(command.command_type);
 
@@ -68,7 +69,7 @@ int32_t get_command_package(Driver *driver, Command command, int32_t arg_num, va
     err = cmd_func[command.command_type](package, command, pkg_len);
     if (err != SUCCESS)
         goto error;
-
+    
     /* Save the command package in the driver structure */
     if (driver->cmd_buf != NULL)
         free(driver->cmd_buf);
@@ -78,10 +79,11 @@ int32_t get_command_package(Driver *driver, Command command, int32_t arg_num, va
 
     return SUCCESS;
 
-error:
-    free(package);
+    error:
+        free(package);
 
     return CMD_PKG_FAIL;
+
 }
 
 int32_t populate_command_args(Command *command, int32_t arg_num, va_list ap) {
@@ -156,11 +158,10 @@ int32_t populate_command_args(Command *command, int32_t arg_num, va_list ap) {
         command->body.up_char.buf = va_arg(ap, uint32_t);
 
         break;
-
     case WriteNotepad:
         if (arg_num < 2)
             goto error;
-        
+
         command->body.write_notepad.page_num = va_arg(ap, uint32_t);
         memcpy(command->body.write_notepad.data, va_arg(ap, uint8_t *), PAGE_SIZE);
 
@@ -168,23 +169,41 @@ int32_t populate_command_args(Command *command, int32_t arg_num, va_list ap) {
     case ReadNotepad:
         if (arg_num < 1)
             goto error;
-        
-        command->body.read_notepad.page_num = va_arg(ap, uint32_t);
-        
-        break;
-    default:
-        goto error;
 
+        command->body.read_notepad.page_num = va_arg(ap, uint32_t);
+
+        break;
     case AuraLedConfig:
         if (arg_num < 4)
             goto error;
+        
         command->body.aura_led_config.ctrl = va_arg(ap, uint32_t);
         command->body.aura_led_config.speed = va_arg(ap, uint32_t);
         command->body.aura_led_config.color = va_arg(ap, uint32_t);
         command->body.aura_led_config.times = va_arg(ap, uint32_t);
 
         break;
+    case SetPwd:
+        if (arg_num < 1)
+            goto error;
+
+        command->body.set_pwd.passw = va_arg(ap, uint32_t);
+
+        break;
+    case SetAddr:
+        if (arg_num < 1)
+            goto error;
+
+        command->body.set_addr.addr = va_arg(ap, uint32_t);
+
+        break;
+    case HandShake:
+        break;
+    
+    default:
+        goto error;
     }
+
 
     return SUCCESS;
 
@@ -614,16 +633,17 @@ static int32_t read_notepad_pkg(uint8_t *pkg, Command command, int32_t pkg_len) 
     return SUCCESS;
 }
 
-static int32_t aura_led_config(uint8_t *pkg, Command command, int32_t pkg_len) {
+static int32_t aura_led_config_pkg(uint8_t *pkg, Command command, int32_t pkg_len) {
     // Required packet:
-    // basic_header                         [7]
-    // length    | 0x00 0x07                [2]
-    // instr     | 0x35                     [1]
-    // control   | aura_led_config.ctrl     [1]
-    // speed     | aura_led_config.speed    [1]
-    // color     | aura_led_config.color    [1]
-    // times     | aura_led_config.times    [1]
-    // chksum    | checksum                 [2]
+    // basic_header                      [7]
+    // length  | 0x00 0x07               [2]
+    // instr   | 0x35                    [1]
+    // control | aura_led_config.control [1]
+    // speed   | aura_led_config.speed   [1]
+    // color   | aura_led_config.color   [1]
+    // times   | aura_led_config.times   [1]
+    // chksum  | checksum                [2]
+
     /* Package length */
     pkg[7] = 0x00;
     pkg[8] = 0x07;
@@ -631,7 +651,7 @@ static int32_t aura_led_config(uint8_t *pkg, Command command, int32_t pkg_len) {
     /* Instruction code */
     pkg[9] = 0x35;
 
-    /* Control code */
+    /* Control Code */
     pkg[10] = command.body.aura_led_config.ctrl;
 
     /* Speed */
@@ -646,10 +666,100 @@ static int32_t aura_led_config(uint8_t *pkg, Command command, int32_t pkg_len) {
     /* Checksum */
     uint16_t chk = checksum(pkg, 6, pkg_len - 2);
     uint8_t *chk_bytes = to_bytes_MSB(&chk, CHECKSUM_LEN);
+
     pkg[14] = chk_bytes[0];
     pkg[15] = chk_bytes[1];
 
     free(chk_bytes);
+
+    return SUCCESS;
+}
+
+static int32_t set_pwd_pkg(uint8_t *pkg, Command command, int32_t pkg_len) {
+    // Required packet:
+    // basic_header           [7]
+    // length | 0x00 0x07     [2]
+    // instr  | 0x12          [1]
+    // passw  | set_pwd.passw [4]
+    // chksum | checksum      [2]
+
+    /* Package length */
+    pkg[7] = 0x00;
+    pkg[8] = 0x07;
+
+    /* Instruction code */
+    pkg[9] = 0x12;
+
+    /* Password */
+    size_t passw_size = sizeof(command.body.set_pwd.passw);
+    uint8_t *passw_bytes = to_bytes_MSB(&(command.body.set_pwd.passw), passw_size);
+    for (int i = 0; i < passw_size; ++i)
+        pkg[i + 10] = passw_bytes[i];
+
+    /* Checksum */
+    uint16_t chk = checksum(pkg, 6, pkg_len - 2);
+    uint8_t *chk_bytes = to_bytes_MSB(&chk, CHECKSUM_LEN);
+
+    pkg[14] = chk_bytes[0];
+    pkg[15] = chk_bytes[1];
+
+    free(chk_bytes);
+    free(passw_bytes);
+
+    return SUCCESS;
+}
+
+static int32_t set_addr_pkg(uint8_t *pkg, Command command, int32_t pkg_len) {
+    // Required packet:
+    // basic_header           [7]
+    // length | 0x00 0x07     [2]
+    // instr  | 0x12          [1]
+    // passw  | set_addr.addr [4]
+    // chksum | checksum      [2]
+
+    /* Package length */
+    pkg[7] = 0x00;
+    pkg[8] = 0x07;
+
+    /* Instruction code */
+    pkg[9] = 0x15;
+
+    /* Address */
+    size_t addr_size = sizeof(command.body.set_addr.addr);
+    uint8_t *addr_bytes = to_bytes_MSB(&(command.body.set_addr.addr), addr_size);
+    for (int i = 0; i < addr_size; ++i)
+        pkg[i + 10] = addr_bytes[i];
+
+    /* Checksum */
+    uint16_t chk = checksum(pkg, 6, pkg_len - 2);
+    uint8_t *chk_bytes = to_bytes_MSB(&chk, CHECKSUM_LEN);
+
+    pkg[14] = chk_bytes[0];
+    pkg[15] = chk_bytes[1];
+
+    free(chk_bytes);
+    free(addr_bytes);
+
+    return SUCCESS;
+}
+
+static int32_t handshake_pkg(uint8_t *pkg, Command command, int32_t pkg_len) {
+    // Required packet:
+    // basic_header             [7]
+    // length | 0x00 0x03       [2]
+    // instr  | 0x40            [1]
+    // chksum | 0x00 0x07       [2]
+
+    /* Package length */
+    pkg[7] = 0x00;
+    pkg[8] = 0x03;
+
+    /* Instruction code */
+    pkg[9] = 0x40;
+
+    /* Checksum */
+    pkg[10] = 0x00;
+    pkg[11] = 0x44;
 
     return SUCCESS;
 }
